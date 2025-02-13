@@ -9,7 +9,8 @@ import { SnippetCardClient } from '@/components/SnippetCardClient'
 import { ApiSnippet } from '@/types/snippet'
 import { authClient } from '@/lib/auth-client'
 import { redirect } from 'next/navigation'
-
+import { motion, AnimatePresence } from 'framer-motion'
+import { Plus, Code, Loader2 } from 'lucide-react'
 
 export default function Home() {
   const [snippets, setSnippets] = useState<ApiSnippet[]>([])
@@ -19,11 +20,8 @@ export default function Home() {
 
   const {
     data: session,
-    isPending, //loading state
-    // error: sessionError, //error object
-    // refetch //refetch the session
+    isPending,
   } = authClient.useSession()
-
 
   const fetchSnippets = useCallback(async () => {
     if (isPending) {
@@ -63,57 +61,99 @@ export default function Home() {
 
   if (error) {
     return (
-      <div className="container mx-auto py-8">
-        <div className="text-center">
-          <p className="text-red-500 mb-4">Error: {error}</p>
-          <Button onClick={fetchSnippets}>Retry</Button>
-        </div>
+      <div className="container mx-auto py-16">
+        <motion.div
+          className="text-center bg-destructive/10 rounded-lg p-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <p className="text-destructive mb-4 font-medium">Error: {error}</p>
+          <Button onClick={fetchSnippets} variant="outline">
+            Retry
+          </Button>
+        </motion.div>
       </div>
     )
   }
 
   return (
-    <main className="container mx-auto py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Code Snippets</h1>
+    <main className="min-h-[calc(100vh-4rem)] bg-gradient-to-b from-background to-muted/50">
+      <div className="container mx-auto py-8 px-4">
+        <motion.div
+          className="flex justify-between items-center mb-8"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <div className="flex items-center gap-3">
+            <Code className="w-8 h-8 text-primary" />
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary-foreground bg-clip-text text-transparent">
+              Code Snippets
+            </h1>
+          </div>
 
-        <Dialog open={showCreate} onOpenChange={setShowCreate}>
-          <DialogTrigger asChild>
-            <Button>New Snippet</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogTitle>Add Code Snippet</DialogTitle>
-            <SnippetForm
-              onSuccess={() => {
-                setShowCreate(false)
-                fetchSnippets()
-              }}
-            />
-          </DialogContent>
-        </Dialog>
+          <Dialog open={showCreate} onOpenChange={setShowCreate}>
+            <DialogTrigger asChild>
+              <Button className="group hover:scale-105 transition-transform">
+                <Plus className="w-4 h-4 mr-2 group-hover:rotate-90 transition-transform" />
+                New Snippet
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[600px]">
+              <DialogTitle>Add Code Snippet</DialogTitle>
+              <SnippetForm
+                onSuccess={() => {
+                  setShowCreate(false)
+                  fetchSnippets()
+                }}
+              />
+            </DialogContent>
+          </Dialog>
+        </motion.div>
+
+        {isLoading ? (
+          <div className="flex items-center justify-center py-16">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          </div>
+        ) : snippets.length === 0 ? (
+          <motion.div
+            className="text-center py-16 bg-muted/50 rounded-lg"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+          >
+            <Code className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+            <p className="text-muted-foreground text-lg">
+              No snippets found. Create your first one!
+            </p>
+          </motion.div>
+        ) : (
+          <motion.div
+            className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            <AnimatePresence mode="popLayout">
+              {snippets.map((snippet, index) => (
+                <motion.div
+                  key={snippet.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                    transition: { delay: index * 0.1 }
+                  }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  layout
+                >
+                  <SnippetCardClient
+                    snippet={snippet}
+                    onDelete={fetchSnippets}
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        )}
       </div>
-
-      {isLoading ? (
-        <div className="text-center py-8">
-          <p className="text-muted-foreground">Loading snippets...</p>
-        </div>
-      ) : snippets.length === 0 ? (
-        <div className="text-center py-8">
-          <p className="text-muted-foreground">
-            No snippets found. Create your first one!
-          </p>
-        </div>
-      ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {snippets.map(snippet => (
-            <SnippetCardClient
-              key={snippet.id}
-              snippet={snippet}
-              onDelete={fetchSnippets}
-            />
-          ))}
-        </div>
-      )}
     </main>
   )
 }

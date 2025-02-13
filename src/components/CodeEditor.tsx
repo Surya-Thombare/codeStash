@@ -1,9 +1,12 @@
+// components/CodeEditor.tsx
 import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vs2015 } from "react-syntax-highlighter/dist/esm/styles/hljs";
-import { Copy } from "lucide-react";
+import { Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { languages } from "@shared/schema";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Import all language styles
 import javascript from "react-syntax-highlighter/dist/esm/languages/hljs/javascript";
@@ -56,42 +59,96 @@ interface CodeEditorProps {
   maxLines?: number;
 }
 
+// components/CodeEditor.tsx
+// ... (previous imports and language registrations remain the same)
+
 export function CodeEditor({ code, language, showCopy = true, maxLines }: CodeEditorProps) {
   const { toast } = useToast();
+  const [copied, setCopied] = useState(false);
   const displayCode = maxLines ? truncateCode(code, maxLines) : code;
 
   const copyCode = async () => {
-    await navigator.clipboard.writeText(code);
-    toast({
-      description: "Code copied to clipboard",
-      duration: 2000,
-    });
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopied(true);
+      toast({
+        description: "Code copied to clipboard",
+        duration: 2000,
+      });
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      toast({
+        description: "Failed to copy code",
+        variant: "destructive",
+        duration: 2000,
+      });
+    }
   };
 
   return (
-    <div className="relative">
+    <div className="relative group">
       {showCopy && (
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute right-2 top-2 z-10"
-          onClick={copyCode}
-        >
-          <Copy className="h-4 w-4" />
-        </Button>
+        <AnimatePresence>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="absolute right-2 top-2 z-10"
+          >
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 bg-background/80 backdrop-blur-sm hover:bg-background"
+              onClick={copyCode}
+            >
+              <AnimatePresence mode="wait">
+                {copied ? (
+                  <motion.div
+                    key="check"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                  >
+                    <Check className="h-4 w-4 text-green-500" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="copy"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                  >
+                    <Copy className="h-4 w-4" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </Button>
+          </motion.div>
+        </AnimatePresence>
       )}
-      <SyntaxHighlighter
-        language={language}
-        style={vs2015}
-        className="!bg-slate-900 !font-mono rounded-md"
-        customStyle={{
-          padding: "1.5rem",
-          fontSize: "0.875rem",
-          lineHeight: "1.5rem",
-        }}
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
       >
-        {displayCode}
-      </SyntaxHighlighter>
+        <SyntaxHighlighter
+          language={language}
+          style={vs2015}
+          className="!bg-slate-900 !font-mono rounded-md overflow-hidden"
+          customStyle={{
+            padding: "1.5rem",
+            fontSize: "0.875rem",
+            lineHeight: "1.5rem",
+            margin: 0,
+          }}
+          showLineNumbers={true}
+          wrapLines={true}
+          wrapLongLines={true}
+        >
+          {displayCode}
+        </SyntaxHighlighter>
+      </motion.div>
     </div>
   );
 }
