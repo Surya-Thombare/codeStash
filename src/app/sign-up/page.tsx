@@ -1,6 +1,6 @@
 // "use client";
 
-import { Login } from "../login";
+// // import { Login } from "../login";
 
 // import Link from "next/link";
 // import { useState } from "react";
@@ -12,7 +12,7 @@ import { Login } from "../login";
 // import { authClient } from "@/lib/auth-client";
 // // import { fetchCallback } from "@/lib/utils";
 
-// export function Login({ mode = "signin" }: { mode?: "signin" | "signup" }) {
+// export default function SignupPage({ mode = "signin" }: { mode?: "signin" | "signup" }) {
 //   const searchParams = useSearchParams();
 //   const redirect = searchParams.get("redirect");
 //   const priceId = searchParams.get("priceId");
@@ -213,9 +213,8 @@ import { Login } from "../login";
 //   );
 // }
 
-
-// import { Login } from "../login";
+import { Login } from "../login";
 
 export default function SignInPage() {
-  return <Login mode="signin" />;
+  return <Login mode="signup" />;
 }

@@ -12,7 +12,7 @@ export const snippets = pgTable('snippets', {
   code: text('code').notNull(),
   language: varchar('language', { length: 50 }).notNull(),
   tags: text('tags').array().default([]),
-  userId: text('user_id')
+  user_id: text('user_id')
     .notNull()
     .references(() => users.id),
   ...timestamps
