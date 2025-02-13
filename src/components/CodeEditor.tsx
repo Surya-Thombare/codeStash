@@ -4,7 +4,6 @@ import { vs2015 } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { languages } from "@shared/schema";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -54,13 +53,10 @@ function truncateCode(code: string, maxLines: number): string {
 
 interface CodeEditorProps {
   code: string;
-  language: typeof languages[number];
+  language: string;
   showCopy?: boolean;
   maxLines?: number;
 }
-
-// components/CodeEditor.tsx
-// ... (previous imports and language registrations remain the same)
 
 export function CodeEditor({ code, language, showCopy = true, maxLines }: CodeEditorProps) {
   const { toast } = useToast();
@@ -78,7 +74,7 @@ export function CodeEditor({ code, language, showCopy = true, maxLines }: CodeEd
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
       toast({
-        description: "Failed to copy code",
+        description: `Failed to copy code : ${error}`,
         variant: "destructive",
         duration: 2000,
       });

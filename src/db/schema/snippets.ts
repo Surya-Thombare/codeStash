@@ -20,7 +20,6 @@ export const snippets = pgTable('snippets', {
 
 // Schemas
 export const insertSnippetSchema = createInsertSchema(snippets).omit({
-  id: true,
   createdAt: true,
 });
 

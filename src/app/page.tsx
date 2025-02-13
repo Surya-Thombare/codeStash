@@ -6,14 +6,14 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { SnippetForm } from '@/components/SnippetForm'
 import { SnippetCardClient } from '@/components/SnippetCardClient'
-import { ApiSnippet } from '@/types/snippet'
 import { authClient } from '@/lib/auth-client'
 import { redirect } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Plus, Code, Loader2 } from 'lucide-react'
+import { Snippet } from '@/db/schema/snippets'
 
 export default function Home() {
-  const [snippets, setSnippets] = useState<ApiSnippet[]>([])
+  const [snippets, setSnippets] = useState<Snippet[]>([])
   const [showCreate, setShowCreate] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -134,7 +134,7 @@ export default function Home() {
             <AnimatePresence mode="popLayout">
               {snippets.map((snippet, index) => (
                 <motion.div
-                  key={snippet.id}
+                  key={String(snippet.id)}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{
                     opacity: 1,

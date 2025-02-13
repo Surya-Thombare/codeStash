@@ -15,10 +15,11 @@ export async function PATCH(
     const updatedSnippet = await db
       .update(snippets)
       .set(body)
-      .where(eq(snippets.id, id))
+      .where(eq(snippets.id, parseInt(id)))
       .returning();
     return NextResponse.json(updatedSnippet[0]);
   } catch (error) {
+    console.error('Failed to update snippet:', error);
     return NextResponse.json({ error: 'Failed to update snippet' }, { status: 500 });
   }
 }
@@ -30,11 +31,11 @@ export async function DELETE(
 
   const { id } = await params
 
-
   try {
-    await db.delete(snippets).where(eq(snippets.id, id));
-    return NextResponse.json({ message: 'Snippet deleted' });
+    await db.delete(snippets).where(eq(snippets.id, parseInt(id)));
   } catch (error) {
+    console.error('Failed to delete snippet:', error);
+    return NextResponse.json({ error: 'Failed to delete snippet' }, { status: 500 });
     return NextResponse.json({ error: 'Failed to delete snippet' }, { status: 500 });
   }
 }

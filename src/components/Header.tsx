@@ -69,8 +69,8 @@ export function Header() {
                     <Avatar className="h-10 w-10 ring-2 ring-primary/20 ring-offset-2 ring-offset-background">
                       {session.user.image && (
                         <AvatarImage
-                          src={session.session.user.image}
-                          alt={session.session.user.name || ''}
+                          src={session.user.image}
+                          alt={session.user.name || ''}
                           className="object-cover"
                         />
                       )}

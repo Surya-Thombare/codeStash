@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { desc } from 'drizzle-orm';
-import { insertSnippetSchema, snippets } from '@/db/schema/snippets';
+import { insertSnippetSchema, Snippet, snippets } from '@/db/schema/snippets';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 
@@ -28,13 +28,17 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
+
     const snippet = {
-      ...body,
-      user_id: session.session.userId  // Ensure user_id is set correctly
+      title: body.title,
+      code: body.code,
+      language: body.language,
+      user_id: session.session.userId,
+      tags: body.tags
     };
 
     // Validate the input using the schema
-    const validated = insertSnippetSchema.parse(snippet);
+    const validated = insertSnippetSchema.parse(snippet) as Snippet;
 
     const newSnippet = await db.insert(snippets)
       .values(validated)

@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
-import { RawCode } from 'codehike/code'
 import { Snippet } from '@/db/schema/snippets'
 import { motion } from 'framer-motion'
 import { Save, X } from 'lucide-react'
@@ -36,7 +35,7 @@ export function SnippetForm({
   onSuccess,
   onCancel
 }: {
-  snippet?: Omit<Snippet, 'code'> & { code: RawCode }
+  snippet?: Snippet
   onSuccess?: () => void
   onCancel?: () => void
 }) {

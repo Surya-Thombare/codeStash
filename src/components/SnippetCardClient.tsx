@@ -6,13 +6,13 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from './ui/card'
 import { Dialog, DialogContent, DialogTrigger } from './ui/dialog'
 import { Button } from './ui/button'
 import { SnippetForm } from './SnippetForm'
-import type { HighlightedSnippet } from '@/types/snippet'
 import { CodeEditor } from './CodeEditor'
 import { Edit2, Trash2, Loader2 } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { Snippet } from '@/db/schema/snippets'
 
 interface SnippetCardClientProps {
-  snippet: HighlightedSnippet
+  snippet: Snippet
   onDelete?: () => void
 }
 
@@ -72,7 +72,7 @@ export function SnippetCardClient({
 
         <div className="p-4">
           <div className="flex flex-wrap gap-2">
-            {snippet.tags.map(tag => (
+            {snippet.tags && snippet.tags.map((tag: string) => (
               <motion.span
                 key={tag}
                 className="bg-primary/10 text-primary px-2 py-1 rounded-full text-xs font-medium"
