@@ -4,8 +4,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import type { Snippet } from '@/db/schema'
+// import type { Snippet } from '@/db/schema/comments'
 import { RawCode } from 'codehike/code'
+import { Snippet } from '@/db/schema/snippets'
 
 const LANGUAGES = ['javascript', 'python', 'java', 'cpp', 'ruby', 'go', 'rust']
 
@@ -26,16 +27,18 @@ export function SnippetForm({
 
     const formattedTags = tags.split(',').map(tag => tag.trim()).filter(Boolean)
 
+    const content = {
+      title,
+      code,
+      language,
+      tags: formattedTags
+    }
+
     if (snippet?.id) {
       await fetch(`/api/snippets/${snippet.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title,
-          code,
-          language,
-          tags: formattedTags
-        }),
+        body: JSON.stringify(content),
       })
     } else {
       await fetch('/api/snippets', {

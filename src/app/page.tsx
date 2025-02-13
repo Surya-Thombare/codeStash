@@ -6,13 +6,10 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { SnippetForm } from '@/components/SnippetForm'
 import { SnippetCardClient } from '@/components/SnippetCardClient'
-import type { Snippet } from '@/db/schema'
-import { RawCode } from 'codehike/code'
+import { ApiSnippet } from '@/types/snippet'
+import { authClient } from '@/lib/auth-client'
+import { redirect } from 'next/navigation'
 
-// Define the type for snippets as they come from the API
-type ApiSnippet = Omit<Snippet, 'code'> & {
-  code: RawCode
-}
 
 export default function Home() {
   const [snippets, setSnippets] = useState<ApiSnippet[]>([])
@@ -20,7 +17,22 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  const {
+    data: session,
+    isPending, //loading state
+    // error: sessionError, //error object
+    // refetch //refetch the session
+  } = authClient.useSession()
+
+
   const fetchSnippets = useCallback(async () => {
+    if (isPending) {
+      return <div>Loading...</div>
+    }
+
+    if (!session?.session) {
+      redirect('/sign-in')
+    }
     try {
       setIsLoading(true)
       setError(null)
@@ -43,7 +55,7 @@ export default function Home() {
     } finally {
       setIsLoading(false)
     }
-  }, [])
+  }, [isPending, session?.session])
 
   useEffect(() => {
     fetchSnippets()

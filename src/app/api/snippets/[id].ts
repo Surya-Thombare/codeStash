@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
-import { snippets } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import { snippets } from '@/db/schema';
 
 export async function PATCH(
   request: Request,

@@ -19,10 +19,10 @@ export default function LoginPage() {
     e.preventDefault()
 
     try {
-      const { data, error } = await authClient.signUp.email({
+      const { data, error } = await authClient.signIn.email({
         email,
         password,
-        name,
+        // name,
         callbackURL: "/"
       }, {
         onRequest: () => {
