@@ -74,7 +74,7 @@ export function PricingSection() {
             Simple, Transparent Pricing
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Choose the plan that's right for you or your team
+            Choose the plan that&apos;s right for you or your team
           </p>
         </motion.div>
 

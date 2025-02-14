@@ -19,13 +19,11 @@ export function TypewriterEffect({ words, className = "" }: TypewriterEffectProp
         transition: { duration: 0.5 }
       })
 
-      let delay = 0
       for (let i = 0; i <= words.length; i++) {
         await controls.start({
           width: `${i}ch`,
           transition: { duration: 0.05 }
         })
-        delay += 0.05
       }
     }
 
