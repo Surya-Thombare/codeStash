@@ -126,7 +126,7 @@ export function Login({ mode = "signin" }: { mode?: "signin" | "signup" }) {
                     {
                       email,
                       password,
-                      callbackURL: "/",
+                      callbackURL: "/snippets",
                     },
                     // fetchCallback({ setIsPending })
                   );
@@ -136,7 +136,7 @@ export function Login({ mode = "signin" }: { mode?: "signin" | "signup" }) {
                       email,
                       password,
                       name,
-                      callbackURL: "/",
+                      callbackURL: "/snippets",
                     },
                     // fetchCallback({ setIsPending })
                   );
@@ -162,7 +162,7 @@ export function Login({ mode = "signin" }: { mode?: "signin" | "signup" }) {
                 onClick={async () => {
                   await authClient.signIn.social({
                     provider: "github",
-                    callbackURL: "/",
+                    callbackURL: "/snippets",
                   });
                 }}
                 className="w-full mt-2 flex justify-center items-center py-2 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white gap-2"
@@ -186,7 +186,7 @@ export function Login({ mode = "signin" }: { mode?: "signin" | "signup" }) {
                 onClick={async () => {
                   await authClient.signIn.social({
                     provider: "github",
-                    callbackURL: "/",
+                    callbackURL: "/snippets",
                   });
                 }}
                 className="w-full mt-2 flex justify-center items-center py-2 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white gap-2"
