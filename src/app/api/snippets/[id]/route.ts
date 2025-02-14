@@ -3,8 +3,15 @@ import { db } from '@/db';
 import { eq } from 'drizzle-orm';
 import { snippets } from '@/db/schema';
 
+interface RouteParams {
+  params: {
+    id: string
+  }
+}
+
+
 export async function GET(request: Request,
-  { params }: { params: { id: string } }
+  { params }: RouteParams
 ) {
   const { id } = await params;
 
@@ -21,7 +28,7 @@ export async function GET(request: Request,
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: RouteParams
 ) {
 
   const { id } = await params
@@ -42,7 +49,7 @@ export async function PATCH(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: RouteParams
 ) {
 
   const { id } = await params
