@@ -13,7 +13,7 @@ export default function Home() {
 
   useEffect(() => {
     refetch()
-  }, [])
+  })
 
   if (error) {
     return (

@@ -14,7 +14,7 @@ import {
 import { motion } from "framer-motion"
 
 export function ThemeToggle() {
-  const { setTheme, theme } = useTheme()
+  const { setTheme } = useTheme()
 
   return (
     <DropdownMenu>

@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation"
 import { Snippet } from "@/db/schema/snippets"
 import { CodeEditor } from "@/components/CodeEditor"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useCallback, useEffect, useState } from "react"
 import { motion } from 'framer-motion'
 import { Button } from "@/components/ui/button"
@@ -112,9 +112,9 @@ export default function SnippetPage({ params }: PageProps) {
             <h1 className="text-3xl font-bold tracking-tight">
               {snippet.title}
             </h1>
-            <p className="text-sm text-muted-foreground">
+            {/* <p className="text-sm text-muted-foreground">
               {snippet.description}
-            </p>
+            </p> */}
           </div>
 
           <div className="flex items-center space-x-4">

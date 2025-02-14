@@ -9,7 +9,7 @@ import { TypewriterEffect } from './TypewriterEffect'
 import { authClient } from '@/lib/auth-client'
 
 export function HeroSection() {
-  const { data: session, isPending } = authClient.useSession()
+  const { data: session } = authClient.useSession()
 
 
   return (

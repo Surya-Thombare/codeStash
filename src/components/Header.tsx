@@ -24,7 +24,7 @@ import { useSnippets } from '@/lib/snippets'
 
 export function Header() {
   const { data: session, isPending } = authClient.useSession()
-  const { snippets, isLoading, error, refetch } = useSnippets()
+  const { refetch } = useSnippets()
 
   const [showCreate, setShowCreate] = useState(false)
 
