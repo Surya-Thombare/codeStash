@@ -3,6 +3,22 @@ import { db } from '@/db';
 import { eq } from 'drizzle-orm';
 import { snippets } from '@/db/schema';
 
+export async function GET(request: Request,
+  { params }: { params: { id: string } }
+) {
+  const { id } = await params;
+
+  try {
+
+    const snippet = await db.select().from(snippets).where(eq(snippets.id, parseInt(id)))
+
+    return NextResponse.json(snippet)
+  } catch (error) {
+    console.error('Failed to delete snippet:', error);
+    return NextResponse.json({ error: 'Failed to delete snippet' }, { status: 500 });
+  }
+}
+
 export async function PATCH(
   request: Request,
   { params }: { params: { id: string } }
@@ -35,7 +51,6 @@ export async function DELETE(
     await db.delete(snippets).where(eq(snippets.id, parseInt(id)));
   } catch (error) {
     console.error('Failed to delete snippet:', error);
-    return NextResponse.json({ error: 'Failed to delete snippet' }, { status: 500 });
     return NextResponse.json({ error: 'Failed to delete snippet' }, { status: 500 });
   }
 }

@@ -156,7 +156,7 @@ export function Login({ mode = "signin" }: { mode?: "signin" | "signup" }) {
             </Button>
 
 
-            {/* {mode === "signin" ? (
+            {mode === "signin" ? (
 
               <Button
                 onClick={async () => {
@@ -204,9 +204,8 @@ export function Login({ mode = "signin" }: { mode?: "signin" | "signup" }) {
                 </svg>
                 Continue with Github
               </Button>
-              // <></>
 
-            )} */}
+            )}
 
           </div>
         </div>
