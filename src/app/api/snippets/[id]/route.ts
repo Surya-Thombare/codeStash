@@ -49,6 +49,7 @@ export async function DELETE(
 
   try {
     await db.delete(snippets).where(eq(snippets.id, parseInt(id)));
+    return NextResponse.json({ success: 'snippet deleted successfully' })
   } catch (error) {
     console.error('Failed to delete snippet:', error);
     return NextResponse.json({ error: 'Failed to delete snippet' }, { status: 500 });

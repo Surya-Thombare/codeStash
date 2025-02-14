@@ -6,8 +6,12 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { Github, ArrowRight } from 'lucide-react'
 import { TypewriterEffect } from './TypewriterEffect'
+import { authClient } from '@/lib/auth-client'
 
 export function HeroSection() {
+  const { data: session, isPending } = authClient.useSession()
+
+
   return (
     <section className="relative py-24 px-4 overflow-hidden">
       {/* Background Grid */}
@@ -57,7 +61,7 @@ export function HeroSection() {
             className="flex gap-4 justify-center"
           >
             <Button size="lg" asChild className="group">
-              <Link href="/sign-up">
+              <Link href={session?.session ? '/snippets' : '/sign-up'}>
                 Get Started
                 <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>

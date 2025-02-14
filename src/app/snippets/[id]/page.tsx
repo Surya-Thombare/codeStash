@@ -119,20 +119,20 @@ export default function SnippetPage({ params }: PageProps) {
 
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
-              {snippet.user && (
+              {/* {snippet.user && (
                 <Avatar className="h-8 w-8">
                   <AvatarImage src={snippet.user.image || undefined} />
                   <AvatarFallback>
                     {snippet.user.name?.[0]?.toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-              )}
+              )} */}
               <div className="space-y-1">
-                {snippet.user?.name && (
+                {/* {snippet.user?.name && (
                   <p className="text-sm font-medium leading-none">
                     {snippet.user.name}
                   </p>
-                )}
+                )} */}
                 {/* <p className="text-xs text-muted-foreground">
                   {formatDistanceToNow(new Date(snippet.createdAt), {
                     addSuffix: true,

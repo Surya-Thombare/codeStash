@@ -10,6 +10,7 @@ import { CodeEditor } from './CodeEditor'
 import { Edit2, Trash2, Loader2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Snippet } from '@/db/schema/snippets'
+import { useRouter } from 'next/navigation'
 
 interface SnippetCardClientProps {
   snippet: Snippet
@@ -22,6 +23,8 @@ export function SnippetCardClient({
 }: SnippetCardClientProps) {
   const [showEdit, setShowEdit] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+  const router = useRouter()
+
 
   const handleDelete = useCallback(async () => {
     if (isDeleting) return
@@ -51,7 +54,7 @@ export function SnippetCardClient({
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow bg-card/50 backdrop-blur-sm">
-      <CardHeader className="border-b bg-muted/30">
+      <CardHeader className="border-b bg-muted/30" onClick={() => router.push(`/snippets/${snippet.id}`)}>
         <CardTitle className="flex items-center justify-between">
           <span className="truncate">{snippet.title}</span>
           <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">

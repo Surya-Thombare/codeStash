@@ -1,3 +1,4 @@
+// components/Header.tsx
 "use client"
 
 import Link from 'next/link'
@@ -13,10 +14,19 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { redirect } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Code2, LogOut, User } from 'lucide-react'
+import { Code2, LogOut, Plus, User } from 'lucide-react'
+import { ThemeToggle } from '@/components/theme-toggle'
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { useState } from 'react'
+import { SnippetForm } from './SnippetForm'
+import { useSnippets } from '@/lib/snippets'
+
 
 export function Header() {
   const { data: session, isPending } = authClient.useSession()
+  const { snippets, isLoading, error, refetch } = useSnippets()
+
+  const [showCreate, setShowCreate] = useState(false)
 
   const handleSignOut = async () => {
     await authClient.signOut({
@@ -56,6 +66,8 @@ export function Header() {
         </Link>
 
         <nav className="flex items-center gap-4">
+          <ThemeToggle />
+
           {isPending ? (
             <div className="h-10 w-10 rounded-full bg-muted animate-pulse" />
           ) : session?.session ? (
@@ -81,6 +93,23 @@ export function Header() {
                   </motion.div>
                 </Button>
               </DropdownMenuTrigger>
+              <Dialog open={showCreate} onOpenChange={setShowCreate}>
+                <DialogTrigger asChild>
+                  <Button className="group hover:scale-105 transition-transform">
+                    <Plus className="w-4 h-4 mr-2 group-hover:rotate-90 transition-transform" />
+                    New Snippet
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[600px]">
+                  <DialogTitle>Add Code Snippet</DialogTitle>
+                  <SnippetForm
+                    onSuccess={() => {
+                      setShowCreate(false)
+                      refetch()
+                    }}
+                  />
+                </DialogContent>
+              </Dialog>
               <DropdownMenuContent align="end" className="w-56">
                 <div className="flex flex-col px-2 py-1.5">
                   <span className="text-sm font-medium">{session.user.name}</span>

@@ -1,65 +1,19 @@
 // app/page.tsx
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { SnippetForm } from '@/components/SnippetForm'
 import { SnippetCardClient } from '@/components/SnippetCardClient'
-import { authClient } from '@/lib/auth-client'
-import { redirect, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, Code, Loader2 } from 'lucide-react'
-import { Snippet } from '@/db/schema/snippets'
+import { Code, Loader2 } from 'lucide-react'
+import { useSnippets } from '@/lib/snippets'
 
 export default function Home() {
-  const [snippets, setSnippets] = useState<Snippet[]>([])
-  const [showCreate, setShowCreate] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const router = useRouter()
-
-
-  const {
-    data: session,
-    isPending,
-  } = authClient.useSession()
-
-  const fetchSnippets = useCallback(async () => {
-    if (isPending) {
-      return <div>Loading...</div>
-    }
-
-    if (!session?.session) {
-      redirect('/sign-in')
-    }
-    try {
-      setIsLoading(true)
-      setError(null)
-
-      const response = await fetch('/api/snippets')
-      if (!response.ok) {
-        throw new Error('Failed to fetch snippets')
-      }
-
-      const data = await response.json()
-      if (!Array.isArray(data)) {
-        throw new Error('Invalid response format')
-      }
-
-      setSnippets(data)
-    } catch (err) {
-      console.error('Failed to fetch snippets', err)
-      setError(err instanceof Error ? err.message : 'Failed to fetch snippets')
-      setSnippets([])
-    } finally {
-      setIsLoading(false)
-    }
-  }, [isPending, session?.session])
+  const { snippets, isLoading, error, refetch } = useSnippets()
 
   useEffect(() => {
-    fetchSnippets()
-  }, [fetchSnippets])
+    refetch()
+  }, [])
 
   if (error) {
     return (
@@ -70,7 +24,7 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
         >
           <p className="text-destructive mb-4 font-medium">Error: {error}</p>
-          <Button onClick={fetchSnippets} variant="outline">
+          <Button onClick={refetch} variant="outline">
             Retry
           </Button>
         </motion.div>
@@ -92,24 +46,6 @@ export default function Home() {
               Code Snippets
             </h1>
           </div>
-
-          <Dialog open={showCreate} onOpenChange={setShowCreate}>
-            <DialogTrigger asChild>
-              <Button className="group hover:scale-105 transition-transform">
-                <Plus className="w-4 h-4 mr-2 group-hover:rotate-90 transition-transform" />
-                New Snippet
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px]">
-              <DialogTitle>Add Code Snippet</DialogTitle>
-              <SnippetForm
-                onSuccess={() => {
-                  setShowCreate(false)
-                  fetchSnippets()
-                }}
-              />
-            </DialogContent>
-          </Dialog>
         </motion.div>
 
         {isLoading ? (
@@ -145,11 +81,10 @@ export default function Home() {
                   }}
                   exit={{ opacity: 0, scale: 0.9 }}
                   layout
-                  onClick={() => router.push(`/snippets/${snippet.id}`)}
                 >
                   <SnippetCardClient
                     snippet={snippet}
-                    onDelete={fetchSnippets}
+                    onDelete={refetch}
                   />
                 </motion.div>
               ))}
