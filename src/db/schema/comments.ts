@@ -5,7 +5,6 @@ import { z } from "zod";
 import { snippets } from './snippets';
 import { timestamps } from './common';
 import { users } from './auth-schema';
-// import { users } from './users';
 
 export const comments = pgTable('comments', {
   id: integer('id').primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),

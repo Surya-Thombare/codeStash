@@ -3,7 +3,6 @@
 import { redirect } from "next/navigation"
 import { Snippet } from "@/db/schema/snippets"
 import { CodeEditor } from "@/components/CodeEditor"
-// import { formatDistanceToNow } from "date-fns"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useCallback, useEffect, useState } from "react"
 import { motion } from 'framer-motion'

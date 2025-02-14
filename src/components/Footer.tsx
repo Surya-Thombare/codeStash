@@ -1,7 +1,6 @@
 // app/landing/Footer.tsx
 "use client"
 
-import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Code2, Github, Twitter, Linkedin } from 'lucide-react'
 import { Button } from '@/components/ui/button'

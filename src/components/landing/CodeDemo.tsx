@@ -4,7 +4,6 @@
 import { motion, useInView } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { highlight, Pre, RawCode } from 'codehike/code'
-import type { HighlightedCode } from 'codehike/code'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Code } from './CodeBlock'
 

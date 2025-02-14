@@ -1,16 +1,6 @@
 // app/landing/page.tsx
 "use client"
 
-// import { motion } from 'framer-motion'
-// import { Button } from '@/components/ui/button'
-// import Link from 'next/link'
-// import { CodeDemo } from './CodeDemo'
-// import { Features } from './Features'
-// import { HeroSection } from './HeroSection'
-// import { Testimonials } from './Testimonials'
-// import { PricingSection } from './PricingSection'
-// import { Footer } from './Footer'
-// import { Github, ArrowRight } from 'lucide-react'
 import { Features } from '@/components/landing/Features'
 import { HeroSection } from '@/components/landing/HeroSection'
 import { CodeDemo } from '@/components/landing/CodeDemo'
