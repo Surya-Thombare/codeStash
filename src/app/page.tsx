@@ -3,7 +3,7 @@
 
 import { Features } from '@/components/landing/Features'
 import { HeroSection } from '@/components/landing/HeroSection'
-import { CodeDemo } from '@/components/landing/CodeDemo'
+// import { CodeDemo } from '@/components/landing/CodeDemo'
 import { TypewriterEffect } from '@/components/landing/TypewriterEffect'
 import { Testimonials } from '@/components/landing/Testimonials'
 import { PricingSection } from '@/components/landing/PricingSection'
@@ -14,7 +14,7 @@ export default function LandingPage() {
     <div className="min-h-screen bg-gradient-to-b from-background via-background/95 to-background/90">
       <HeroSection />
       <Features />
-      <CodeDemo />
+      {/* <CodeDemo /> */}
       <TypewriterEffect words="Your text here" />
       <Testimonials />
       <PricingSection />
