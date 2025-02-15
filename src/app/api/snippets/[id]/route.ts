@@ -4,10 +4,11 @@ import { eq } from 'drizzle-orm';
 import { snippets } from '@/db/schema';
 
 
-export async function GET(request: NextRequest,
-  { params }: { params: { id: string } }
+export async function GET(request: Request,
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = params;
+
+  const id = (await params).id
 
   try {
 
@@ -22,10 +23,11 @@ export async function GET(request: NextRequest,
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
 
-  const { id } = params
+  const id = (await params).id
+
 
   try {
     const body = await request.json();
@@ -43,10 +45,11 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
 
-  const { id } = params
+  const id = (await params).id
+
 
   try {
     await db.delete(snippets).where(eq(snippets.id, parseInt(id)));
