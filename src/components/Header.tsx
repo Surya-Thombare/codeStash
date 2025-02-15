@@ -117,7 +117,7 @@ export function Header() {
                 </div>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild className="gap-2 cursor-pointer">
-                  <Link href="/profile">
+                  <Link href={`/profile/${session.user.id}`}>
                     <User className="w-4 h-4" />
                     Profile
                   </Link>
