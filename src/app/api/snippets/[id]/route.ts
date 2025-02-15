@@ -3,15 +3,9 @@ import { db } from '@/db';
 import { eq } from 'drizzle-orm';
 import { snippets } from '@/db/schema';
 
-interface RouteParams {
-  params: {
-    id: string
-  }
-}
-
 
 export async function GET(request: NextRequest,
-  { params }: RouteParams
+  { params }: { params: { id: string } }
 ) {
   const { id } = params;
 
@@ -28,7 +22,7 @@ export async function GET(request: NextRequest,
 
 export async function PATCH(
   request: NextRequest,
-  { params }: RouteParams
+  { params }: { params: { id: string } }
 ) {
 
   const { id } = params
@@ -49,7 +43,7 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: RouteParams
+  { params }: { params: { id: string } }
 ) {
 
   const { id } = params
