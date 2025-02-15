@@ -1,6 +1,6 @@
 'use client'
 
-import { redirect } from "next/navigation"
+import { redirect, useParams } from "next/navigation"
 import { Snippet } from "@/db/schema/snippets"
 import { CodeEditor } from "@/components/CodeEditor"
 // import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -10,13 +10,8 @@ import { Button } from "@/components/ui/button"
 import { authClient } from "@/lib/auth-client"
 import { Code, Loader2 } from "lucide-react"
 
-interface PageProps {
-  params: {
-    id: string
-  }
-}
 
-export default function SnippetPage({ params }: PageProps) {
+export default function SnippetPage() {
   const [snippet, setSnippet] = useState<Snippet | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -26,8 +21,8 @@ export default function SnippetPage({ params }: PageProps) {
     isPending,
   } = authClient.useSession()
 
+  const { id } = useParams(); // Get the `id` from the URL
   const fetchSnippet = useCallback(async () => {
-    const { id } = await params
 
     if (isPending) return
     if (!session?.session) {
@@ -57,7 +52,7 @@ export default function SnippetPage({ params }: PageProps) {
     } finally {
       setIsLoading(false)
     }
-  }, [params, isPending, session?.session])
+  }, [id, isPending, session?.session])
 
   useEffect(() => {
     fetchSnippet()

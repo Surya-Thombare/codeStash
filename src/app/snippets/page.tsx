@@ -1,7 +1,6 @@
 // app/page.tsx
 'use client'
 
-import { useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { SnippetCardClient } from '@/components/SnippetCardClient'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -10,10 +9,6 @@ import { useSnippets } from '@/lib/snippets'
 
 export default function Home() {
   const { snippets, isLoading, error, refetch } = useSnippets()
-
-  useEffect(() => {
-    refetch()
-  })
 
   if (error) {
     return (

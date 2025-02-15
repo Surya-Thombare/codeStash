@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { eq } from 'drizzle-orm';
 import { snippets } from '@/db/schema';
@@ -10,10 +10,10 @@ interface RouteParams {
 }
 
 
-export async function GET(request: Request,
+export async function GET(request: NextRequest,
   { params }: RouteParams
 ) {
-  const { id } = await params;
+  const { id } = params;
 
   try {
 
@@ -27,11 +27,11 @@ export async function GET(request: Request,
 }
 
 export async function PATCH(
-  request: Request,
+  request: NextRequest,
   { params }: RouteParams
 ) {
 
-  const { id } = await params
+  const { id } = params
 
   try {
     const body = await request.json();
@@ -48,11 +48,11 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  request: Request,
+  request: NextRequest,
   { params }: RouteParams
 ) {
 
-  const { id } = await params
+  const { id } = params
 
   try {
     await db.delete(snippets).where(eq(snippets.id, parseInt(id)));
