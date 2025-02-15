@@ -1,6 +1,5 @@
 import { pgTable, text, integer, index, AnyPgColumn } from 'drizzle-orm/pg-core';
 import { createInsertSchema } from "drizzle-zod";
-
 import { z } from "zod";
 import { snippets } from './snippets';
 import { timestamps } from './common';
@@ -27,9 +26,15 @@ export const comments = pgTable('comments', {
 export type Comment = typeof comments.$inferSelect;
 export type NewComment = typeof comments.$inferInsert;
 
-export const insertCommentSchema = createInsertSchema(comments).omit({
-  id: true,
+// Fixed schema definition
+
+// TODO: Need to add the id as the optinola schema
+export const insertCommentSchema = createInsertSchema(comments, {
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
+}).omit({
   createdAt: true,
+  updatedAt: true,
 });
 
 export type InsertComment = z.infer<typeof insertCommentSchema>;
