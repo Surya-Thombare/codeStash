@@ -30,7 +30,7 @@ export default function Home() {
   return (
     <main className="min-h-[calc(100vh-4rem)] bg-gradient-to-b from-background to-muted/50">
       <div className="container mx-auto py-8 px-4">
-        <motion.div
+        {/* <motion.div
           className="flex justify-between items-center mb-8"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -41,7 +41,7 @@ export default function Home() {
               Code Snippets
             </h1>
           </div>
-        </motion.div>
+        </motion.div> */}
 
         {isLoading ? (
           <div className="flex items-center justify-center py-16">
