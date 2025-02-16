@@ -14,19 +14,12 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { redirect } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Code2, LogOut, Plus, User } from 'lucide-react'
+import { Bell, LogOut, Search, Settings, User } from 'lucide-react'
 import { ThemeToggle } from '@/components/theme-toggle'
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { useState } from 'react'
-import { SnippetForm } from './SnippetForm'
-import { useSnippets } from '@/lib/snippets'
-
+import { Input } from '@/components/ui/input'
 
 export function Header() {
   const { data: session, isPending } = authClient.useSession()
-  const { refetch } = useSnippets()
-
-  const [showCreate, setShowCreate] = useState(false)
 
   const handleSignOut = async () => {
     await authClient.signOut({
@@ -49,24 +42,29 @@ export function Header() {
         damping: 20
       }}
     >
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link
-          href="/"
-          className="flex items-center gap-2 group"
-        >
-          <motion.div
-            whileHover={{ rotate: 360 }}
-            transition={{ duration: 0.5 }}
-          >
-            <Code2 className="w-6 h-6 text-primary" />
-          </motion.div>
-          <span className="font-bold text-xl bg-gradient-to-r from-primary to-primary-foreground bg-clip-text text-transparent">
-            CodeStash
-          </span>
-        </Link>
+      <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
+        {/* Search Bar */}
+        <div className="flex-1 max-w-xl relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search snippets..."
+            className="w-full pl-10 bg-muted/50"
+          />
+        </div>
 
-        <nav className="flex items-center gap-4">
+        <nav className="flex items-center gap-2">
           <ThemeToggle />
+
+          {session?.session && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="relative"
+            >
+              <Bell className="h-5 w-5" />
+              <span className="absolute top-1 right-1 h-2 w-2 bg-primary rounded-full" />
+            </Button>
+          )}
 
           {isPending ? (
             <div className="h-10 w-10 rounded-full bg-muted animate-pulse" />
@@ -93,23 +91,6 @@ export function Header() {
                   </motion.div>
                 </Button>
               </DropdownMenuTrigger>
-              <Dialog open={showCreate} onOpenChange={setShowCreate}>
-                <DialogTrigger asChild>
-                  <Button className="group hover:scale-105 transition-transform">
-                    <Plus className="w-4 h-4 mr-2 group-hover:rotate-90 transition-transform" />
-                    New Snippet
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[600px]">
-                  <DialogTitle>Add Code Snippet</DialogTitle>
-                  <SnippetForm
-                    onSuccess={() => {
-                      setShowCreate(false)
-                      refetch()
-                    }}
-                  />
-                </DialogContent>
-              </Dialog>
               <DropdownMenuContent align="end" className="w-56">
                 <div className="flex flex-col px-2 py-1.5">
                   <span className="text-sm font-medium">{session.user.name}</span>
@@ -122,6 +103,13 @@ export function Header() {
                     Profile
                   </Link>
                 </DropdownMenuItem>
+                <DropdownMenuItem asChild className="gap-2 cursor-pointer">
+                  <Link href="/settings">
+                    <Settings className="w-4 h-4" />
+                    Settings
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={handleSignOut}
                   className="gap-2 text-destructive focus:text-destructive cursor-pointer"
