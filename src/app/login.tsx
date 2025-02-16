@@ -137,14 +137,14 @@ export function Login({ mode = "signin" }: { mode?: "signin" | "signup" }) {
                         await authClient.signIn.email({
                           email,
                           password,
-                          callbackURL: "https://code-stash-three.vercel.app/snippets",
+                          callbackURL: "/snippets",
                         });
                       } else {
                         await authClient.signUp.email({
                           email,
                           password,
                           name,
-                          callbackURL: "https://code-stash-three.vercel.app/snippets",
+                          callbackURL: "/snippets",
                         });
                       }
                     } catch (error) {
@@ -183,7 +183,7 @@ export function Login({ mode = "signin" }: { mode?: "signin" | "signup" }) {
                   onClick={async () => {
                     await authClient.signIn.social({
                       provider: "github",
-                      callbackURL: "https://code-stash-three.vercel.app/snippets",
+                      callbackURL: "/snippets",
                     });
                   }}
                 >
