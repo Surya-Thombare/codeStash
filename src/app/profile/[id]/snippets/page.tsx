@@ -27,14 +27,23 @@ export default function MySnippetsPage() {
     redirect('/sign-in')
   }
 
+  console.log('session', session)
+
   return (
     <main className="container max-w-5xl py-8 space-y-8">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <Avatar className="h-12 w-12">
-            <AvatarImage src={session.session.user.image || undefined} />
+            {session.user.image && (
+              <AvatarImage
+                src={session.user.image}
+                alt={session.user.name || ''}
+                className="object-cover"
+              />
+            )}
+            {/* {session.session.user.image && <AvatarImage src={session.session.user.image || undefined} />} */}
             <AvatarFallback>
-              {session.session.user.name?.[0]?.toUpperCase()}
+              {session.user.name && session.user.name?.charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>
           <div>
