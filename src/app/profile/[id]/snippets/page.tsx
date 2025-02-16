@@ -106,9 +106,9 @@ export default function MySnippetsPage() {
               <h2 className="font-semibold mb-2 group-hover:text-primary">
                 {snippet.title}
               </h2>
-              <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+              {/* <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
                 {snippet.description}
-              </p>
+              </p> */}
               <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs text-muted-foreground">
                 <span>{snippet.language}</span>
                 <span>
