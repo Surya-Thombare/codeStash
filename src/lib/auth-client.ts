@@ -9,6 +9,7 @@ export const authClient = createAuthClient({
       toast.error(ctx.error.message);
     },
   },
+  baseURL: process.env.BETTER_AUTH_URL!
 });
 
 export const { useSession, signOut } = authClient;
