@@ -5,7 +5,7 @@ import { useState, useCallback } from 'react'
 import { Button } from './ui/button'
 import { SnippetForm } from './SnippetForm'
 import { CodeEditor } from './CodeEditor'
-import { Edit2, Trash2, Loader2, MessageSquare, Bookmark, Share2, MoreHorizontal } from 'lucide-react'
+import { Edit2, Trash2, Loader2, MessageSquare, Bookmark, Share2, MoreHorizontal, Heart } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Snippet } from '@/db/schema/snippets'
 import { useRouter } from 'next/navigation'
@@ -17,8 +17,11 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { authClient } from '@/lib/auth-client'
+import cn from 'classnames'
+import { useSnippetLike } from '@/lib/snippets'
 
-interface SnippetCardClientProps {
+interface SnippetCardClientProps {  
   snippet: Snippet
   onDelete?: () => void
 }
@@ -30,6 +33,9 @@ export function SnippetCardClient({
   const [showEdit, setShowEdit] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const router = useRouter()
+  const { data: session } = authClient.useSession()
+
+  const { isLiked, isLoading, toggleLike } = useSnippetLike(snippet.id, session?.user?.id);
 
   const handleDelete = useCallback(async () => {
     if (isDeleting) return
@@ -118,6 +124,21 @@ export function SnippetCardClient({
       {/* Actions */}
       <div className="px-4 py-2 border-t flex items-center justify-between">
         <div className="flex gap-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 gap-2 text-muted-foreground hover:text-primary"
+            onClick={toggleLike}
+            disabled={isLoading || !session?.user}
+          >
+            <Heart 
+              className={cn("h-4 w-4", {
+                "fill-red-500 text-red-500": isLiked,
+                "animate-pulse": isLoading
+              })} 
+            />
+            <span>{!isLoading &&  (snippet.likes_count || 0)}</span>
+          </Button>
           <Button
             variant="ghost"
             size="sm"

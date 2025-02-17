@@ -1,7 +1,7 @@
 // components/sidebar/snippetsSidebar.tsx
 "use client"
 
-import { Home, Search, Bookmark, Settings, Hash, PlusCircle, Folder, Code2 } from "lucide-react"
+import { Home, Search, Bookmark, Settings, Hash, PlusCircle, Folder, Code2, Plus } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
@@ -15,6 +15,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "../ui/dialog"
+import { Button } from "../ui/button"
+import { SnippetForm } from "../SnippetForm"
+import { authClient } from "@/lib/auth-client"
+import { useSnippets } from "@/lib/snippets"
+import { useState } from "react"
 
 const mainNavItems = [
   {
@@ -55,6 +61,11 @@ const tags = [
 ]
 
 export function AppSidebar() {
+  const { data: session, isPending } = authClient.useSession()
+  const { refetch } = useSnippets()
+
+  const [showCreate, setShowCreate] = useState(false)
+
   const pathname = usePathname()
 
   return (
@@ -69,13 +80,30 @@ export function AppSidebar() {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link
+                {/* <Link
                   href="/snippets/new"
                   className="flex items-center gap-2 w-full bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md"
                 >
                   <PlusCircle className="h-5 w-5" />
                   New Snippet
-                </Link>
+                </Link> */}
+                <Dialog open={showCreate} onOpenChange={setShowCreate}>
+                <DialogTrigger asChild>
+                  <Button className="group hover:scale-105 transition-transform">
+                    <Plus className="w-4 h-4 mr-2 group-hover:rotate-90 transition-transform" />
+                    New Snippet
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[600px]">
+                  <DialogTitle>Add Code Snippet</DialogTitle>
+                  <SnippetForm
+                    onSuccess={() => {
+                      setShowCreate(false)
+                      refetch()
+                    }}
+                  />
+                </DialogContent>
+              </Dialog>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>

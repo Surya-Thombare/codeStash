@@ -12,6 +12,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 export default function SnippetsPage() {
   const { snippets, isLoading, error, refetch } = useSnippets()
 
+  console.log('snippet data', snippets[0])
+
   if (error) {
     return (
       <div className="ml-64 p-4">
