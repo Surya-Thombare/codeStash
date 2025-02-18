@@ -18,6 +18,8 @@ export const snippets = pgTable('snippets', {
     .references(() => users.id),
   likes_count: integer('likes_count').default(0).notNull(),
   comments_count: integer('comments_count').default(0).notNull(),
+  bookmarks_count: integer('bookmarks_count').default(0).notNull(),
+  shares_count: integer('shares_count').default(0).notNull(),
   is_private: boolean('is_private').default(false).notNull(),
   metadata: jsonb('metadata').default({}).notNull(),
   ...timestamps
@@ -45,7 +47,7 @@ export const snippetComments = pgTable('snippet_comments', {
   user_id: text('user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
-  parent_id: integer('parent_id').notNull().references((): AnyPgColumn => snippetComments.id),
+  parent_id: integer('parent_id').references((): AnyPgColumn => snippetComments.id),
   metadata: jsonb('metadata').default({}).notNull(),
   ...timestamps
 });

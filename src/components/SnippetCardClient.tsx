@@ -143,9 +143,11 @@ export function SnippetCardClient({
             variant="ghost"
             size="sm"
             className="h-8 gap-2 text-muted-foreground hover:text-primary"
+        onClick={() => router.push(`/snippets/${snippet.id}`)}
+
           >
             <MessageSquare className="h-4 w-4" />
-            <span>24</span>
+            <span>{snippet.comments_count || 0}</span>
           </Button>
           <Button
             variant="ghost"
@@ -153,7 +155,7 @@ export function SnippetCardClient({
             className="h-8 gap-2 text-muted-foreground hover:text-primary"
           >
             <Bookmark className="h-4 w-4" />
-            <span>5</span>
+            <span>{snippet.bookmarks_count || 0}</span>
           </Button>
           <Button
             variant="ghost"
@@ -161,6 +163,7 @@ export function SnippetCardClient({
             className="h-8 gap-2 text-muted-foreground hover:text-primary"
           >
             <Share2 className="h-4 w-4" />
+            <span>{snippet.shares_count || 0}</span>
           </Button>
         </div>
 

@@ -4,7 +4,7 @@ import { eq, and, desc, sql } from "drizzle-orm";
 import { snippets, snippetComments } from "@/db/schema";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { insertCommentSchema } from "@/db/schema/snippets";
+import { insertCommentSchema, SnippetComment } from "@/db/schema/snippets";
 
 // Get comments for a snippet
 export async function GET(
@@ -62,7 +62,14 @@ export async function POST(
     }
 
     const body = await request.json();
-    const validatedData = insertCommentSchema.parse(body);
+
+    console.log('validatedData One', body);
+    
+    const validatedData = insertCommentSchema.parse(body) as SnippetComment;
+
+    console.log('validatedData Two');
+
+    console.log('validatedData', validatedData);
 
     await db.insert(snippetComments).values(validatedData)
       

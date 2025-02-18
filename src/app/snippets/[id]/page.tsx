@@ -8,15 +8,29 @@ import { useCallback, useEffect, useState } from "react"
 import { motion } from 'framer-motion'
 import { Button } from "@/components/ui/button"
 import { authClient } from "@/lib/auth-client"
-import { ArrowLeft, Bookmark, Code, Heart, Loader2, MessageSquare, Share2 } from "lucide-react"
+import { ArrowLeft, Bookmark, Code, Heart, Loader2, MessageSquare, Share2, Send } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
 import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
+import { useSnippetLike } from "@/lib/snippets"
+import { cn } from "@/lib/utils"
+
+interface Comment {
+  id: number;
+  content: string;
+  user_id: string;
+  createdAt: string;
+  metadata: Record<string, any>;
+}
 
 export default function SnippetPage() {
   const [snippet, setSnippet] = useState<Snippet | null>(null)
+  const [comments, setComments] = useState<Comment[]>([])
+  const [newComment, setNewComment] = useState("")
   const [isLoading, setIsLoading] = useState(true)
+  const [isCommenting, setIsCommenting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [mounted, setMounted] = useState(false)
   const router = useRouter()
 
   const {
@@ -25,6 +39,11 @@ export default function SnippetPage() {
   } = authClient.useSession()
 
   const { id } = useParams()
+
+  const { isLiked, isLoading: isLikeLoading, toggleLike } = useSnippetLike(
+    snippet?.id || 0,
+    session?.user?.id
+  );
 
   const fetchSnippet = useCallback(async () => {
     if (isPending) return
@@ -56,9 +75,58 @@ export default function SnippetPage() {
     }
   }, [id, isPending, session?.session])
 
+  const fetchComments = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/snippets/${id}/comment`);
+      if (!response.ok) throw new Error('Failed to fetch comments');
+      const data = await response.json();
+      setComments(data);
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    
+  }, [isLikeLoading]);
+
+  const handleComment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newComment.trim() || isCommenting) return;
+
+    try {
+      setIsCommenting(true);
+      const response = await fetch(`/api/snippets/${id}/comment`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          content: newComment, 
+          snippet_id: Number(id), 
+          user_id: session?.user?.id, 
+          // parent_id: Number(id) 
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to post comment');
+      
+      const updatedComments = await response.json();
+      setComments(updatedComments);
+      setNewComment('');
+    } catch (error) {
+      console.error('Error posting comment:', error);
+    } finally {
+      setIsCommenting(false);
+    }
+  };
+
   useEffect(() => {
     fetchSnippet()
-  }, [fetchSnippet])
+    fetchComments()
+  }, [fetchSnippet, fetchComments])
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   if (error) {
     return (
@@ -133,9 +201,9 @@ export default function SnippetPage() {
                 <div>
                   <p className="font-semibold">{session?.user?.name}</p>
                   <p className="text-sm text-muted-foreground">
-                    {formatDistanceToNow(new Date(snippet.createdAt), {
+                    {mounted ? formatDistanceToNow(new Date(snippet.createdAt), {
                       addSuffix: true,
-                    })}
+                    }) : ''}
                   </p>
                 </div>
                 <div className="flex gap-2">
@@ -179,13 +247,24 @@ export default function SnippetPage() {
 
           {/* Engagement Stats */}
           <div className="flex items-center justify-between py-4 border-y">
-            <Button variant="ghost" size="sm" className="gap-2">
-              <Heart className="h-4 w-4" />
-              <span>234</span>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="gap-2"
+              onClick={toggleLike}
+              disabled={isLikeLoading || !session?.user}
+            >
+              <Heart 
+                className={cn("h-4 w-4", {
+                  "fill-red-500 text-red-500": isLiked,
+                  "animate-pulse": isLikeLoading
+                })} 
+              />
+              <span>{snippet.likes_count || 0}</span>
             </Button>
             <Button variant="ghost" size="sm" className="gap-2">
               <MessageSquare className="h-4 w-4" />
-              <span>12</span>
+              <span>{comments.length}</span>
             </Button>
             <Button variant="ghost" size="sm" className="gap-2">
               <Bookmark className="h-4 w-4" />
@@ -197,43 +276,67 @@ export default function SnippetPage() {
           </div>
 
           {/* Comments Section */}
-          <div className="mt-4 space-y-4">
-            <div className="flex gap-4">
+          <div className="mt-6">
+            <h3 className="text-lg font-semibold mb-4">Comments</h3>
+            
+            {/* Comment Input */}
+            <form onSubmit={handleComment} className="flex gap-4 mb-6">
               <Avatar className="h-8 w-8">
                 <AvatarImage src={session?.user?.image || undefined} />
                 <AvatarFallback>
                   {session?.user?.name?.[0]?.toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex-1">
+              <div className="flex-1 flex gap-2">
                 <Input
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
                   placeholder="Write a comment..."
-                  className="bg-muted"
+                  className="flex-1"
                 />
+                <Button 
+                  type="submit" 
+                  size="sm"
+                  disabled={!newComment.trim() || isCommenting}
+                >
+                  {isCommenting ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Send className="h-4 w-4" />
+                  )}
+                </Button>
               </div>
-            </div>
+            </form>
 
-            {/* Sample Comments (you can map through actual comments) */}
-            <div className="space-y-4 mt-6">
-              {[1, 2].map((i) => (
-                <div key={i} className="flex gap-4">
+            {/* Comments List */}
+            <div className="space-y-4">
+              {comments.map((comment) => (
+                <motion.div
+                  key={comment.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex gap-4"
+                >
                   <Avatar className="h-8 w-8">
-                    <AvatarFallback>U</AvatarFallback>
+                    <AvatarImage src={comment.metadata?.user?.image} />
+                    <AvatarFallback>
+                      {comment.metadata?.user?.name?.[0]?.toUpperCase() || 'U'}
+                    </AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
-                    <div className="bg-muted p-3 rounded-lg">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="font-medium">User Name</span>
-                        <span className="text-xs text-muted-foreground">2h ago</span>
-                      </div>
-                      <p className="text-sm">Great snippet! Really helpful.</p>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-medium">
+                        {comment.metadata?.user?.name || 'User'}
+                      </span>
+                      <span className="text-sm text-muted-foreground">
+                        {mounted ? formatDistanceToNow(new Date(comment.createdAt), {
+                          addSuffix: true,
+                        }) : ''}
+                      </span>
                     </div>
-                    <div className="flex gap-4 mt-1 text-sm text-muted-foreground">
-                      <button className="hover:text-foreground">Like</button>
-                      <button className="hover:text-foreground">Reply</button>
-                    </div>
+                    <p className="text-sm">{comment.content}</p>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
