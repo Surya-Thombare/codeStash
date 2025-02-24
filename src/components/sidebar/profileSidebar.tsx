@@ -1,4 +1,5 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react"
+'use client'
+import { Calendar, Code, Home, Inbox, Search, Settings } from "lucide-react"
 
 import {
   Sidebar,
@@ -10,6 +11,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { authClient } from "@/lib/auth-client"
 
 // Menu items.
 const items = [
@@ -19,14 +21,14 @@ const items = [
     icon: Home,
   },
   {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox,
-  },
-  {
     title: "Calendar",
     url: "#",
     icon: Calendar,
+  },
+  {
+    title: "My Snippets",
+    url: "#",
+    icon: Code,
   },
   {
     title: "Search",
@@ -41,6 +43,8 @@ const items = [
 ]
 
 export function ProfileSidebar() {
+  const { data: session, isPending } = authClient.useSession()
+
   return (
     <Sidebar>
       <SidebarContent>
@@ -51,7 +55,13 @@ export function ProfileSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <a
+                      href={
+                        item.title === "My Snippets"
+                          ? `/profile/${session?.user.id}/snippets`
+                          : `${item.url}`
+                      }
+                    >
                       <item.icon />
                       <span>{item.title}</span>
                     </a>
