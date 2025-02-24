@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { authClient } from '@/lib/auth-client'
 import { redirect } from 'next/navigation'
-import { Snippet } from '@/db/schema/snippets'
+import type { Snippet } from '@/db/schema/snippets'
 
 export function useSnippets() {
   const [snippets, setSnippets] = useState<Snippet[]>([])
@@ -117,5 +117,54 @@ export function useSnippetLike(snippetId: number, userId: string | undefined) {
     error,
     toggleLike,
     checkLikeStatus
+  }
+}
+
+export function useUserSnippets(userId: string) {
+  const [snippets, setSnippets] = useState<Snippet[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  const { data: session, isPending } = authClient.useSession()
+
+  const fetchUserSnippets = useCallback(async () => {
+    if (isPending) return
+    if (!session?.session) {
+      redirect('/sign-in')
+    }
+
+    try {
+      setIsLoading(true)
+      setError(null)
+
+      const response = await fetch(`/api/profile/${userId}`)
+      if (!response.ok) {
+        throw new Error('Failed to fetch user snippets')
+      }
+
+      const data = await response.json()
+      if (!Array.isArray(data)) {
+        throw new Error('Invalid response format')
+      }
+
+      setSnippets(data)
+    } catch (err) {
+      console.error('Failed to fetch user snippets', err)
+      setError(err instanceof Error ? err.message : 'Failed to fetch user snippets')
+      setSnippets([])
+    } finally {
+      setIsLoading(false)
+    }
+  }, [isPending, session?.session, userId])
+
+  useEffect(() => {
+    fetchUserSnippets()
+  }, [fetchUserSnippets])
+
+  return {
+    snippets,
+    isLoading,
+    error,
+    refetch: fetchUserSnippets
   }
 }

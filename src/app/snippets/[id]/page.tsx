@@ -1,7 +1,7 @@
 'use client'
 
 import { redirect, useParams, useRouter } from "next/navigation"
-import { Snippet } from "@/db/schema/snippets"
+import type { Snippet } from "@/db/schema/snippets"
 import { CodeEditor } from "@/components/CodeEditor"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useCallback, useEffect, useState } from "react"
@@ -20,7 +20,7 @@ interface Comment {
   content: string;
   user_id: string;
   createdAt: string;
-  metadata: Record<string, any>;
+  metadata: Record<string, string | boolean>;
 }
 
 export default function SnippetPage() {
@@ -85,10 +85,6 @@ export default function SnippetPage() {
       console.error('Error fetching comments:', error);
     }
   }, [id]);
-
-  useEffect(() => {
-    
-  }, [isLikeLoading]);
 
   const handleComment = async (e: React.FormEvent) => {
     e.preventDefault();
